@@ -116,3 +116,15 @@ class TestSmartRoom(unittest.TestCase):
             smart_room.manage_window()
             change_servo_angle.assert_called_with(12)  # duty_cycle = (180/18) + 2
             self.assertFalse(smart_room.window_open)
+
+
+    @patch.object(SenseairS8, "co2")
+    @patch.object(GPIO, "output")
+    def test_monitor_air_quality(self, mock_fan_output: Mock, mock_co2_sensor: Mock):
+        mock_co2_sensor.return_value = 801
+        smart_room = SmartRoom()
+        smart_room.monitor_air_quality()
+
+        mock_fan_output.assert_called_with(smart_room.FAN_PIN, True)
+        self.assertTrue(smart_room.fan_on)
+

@@ -1,11 +1,10 @@
 import unittest
-import mock.GPIO as GPIO
-from unittest.mock import patch, PropertyMock
 from unittest.mock import Mock
+from unittest.mock import patch, PropertyMock
 
-from mock.adafruit_bmp280 import Adafruit_BMP280_I2C
-from src.smart_room import SmartRoom, DEPLOYMENT
+import mock.GPIO as GPIO
 from mock.senseair_s8 import SenseairS8
+from src.smart_room import SmartRoom
 
 
 class TestSmartRoom(unittest.TestCase):

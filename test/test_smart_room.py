@@ -4,7 +4,7 @@ from unittest.mock import patch, PropertyMock
 from unittest.mock import Mock
 
 from mock.adafruit_bmp280 import Adafruit_BMP280_I2C
-from src.smart_room import SmartRoom
+from src.smart_room import SmartRoom, DEPLOYMENT
 from mock.senseair_s8 import SenseairS8
 
 
@@ -80,3 +80,15 @@ class TestSmartRoom(unittest.TestCase):
         smart_room.manage_light_level()
         lightbulb_mock.assert_called_with(smart_room.LED_PIN, False)
         self.assertFalse(smart_room.light_on)
+
+
+    @patch.object(SmartRoom, "change_servo_angle")
+    def test_manage_window(self, change_servo_angle: Mock):
+        with patch("mock.adafruit_bmp280.Adafruit_BMP280_I2C.temperature", new_callable=PropertyMock) as mock_temperature:
+            mock_temperature.side_effect = [18, 21]
+
+            smart_room = SmartRoom()
+
+            smart_room.manage_window()
+            change_servo_angle.assert_called_with(2)    # duty_cycle = (0/18) + 2
+            self.assertTrue(smart_room.window_open)

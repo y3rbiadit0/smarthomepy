@@ -67,17 +67,16 @@ class SmartRoom:
             self.light_on = False
 
     def manage_window(self) -> None:
-        is_indoor_temp_valid = self._is_temp_in_valid_range(
-            self.bmp280_indor.temperature)
-        is_outdoor_temp_valid = self._is_temp_in_valid_range(
-            self.bmp280_indor.temperature)
+        indoor_temp = self.bmp280_indor.temperature
+        outdoor_temp = self.bmp280_outdoor.temperature
 
-        if not is_indoor_temp_valid or not is_outdoor_temp_valid:
+        if not self._is_valid_range(indoor_temp) or not self._is_valid_range(
+                outdoor_temp):
             self.change_servo_angle(12)
             self.window_open = False
             return
 
-        if self.bmp280_indor.temperature < self.bmp280_outdoor.temperature - 2:
+        if indoor_temp < outdoor_temp - 2:
             self.change_servo_angle(2)
             self.window_open = True
         else:
@@ -103,7 +102,7 @@ class SmartRoom:
             time.sleep(1)
         self.servo.ChangeDutyCycle(0)  # Set duty cycle equal to 0%
 
-    def _is_temp_in_valid_range(self, temperature: int) -> bool:
+    def _is_valid_range(self, temperature: int) -> bool:
         return 18 <= temperature <= 30
 
 

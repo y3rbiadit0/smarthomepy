@@ -84,7 +84,7 @@ class TestSmartRoom(unittest.TestCase):
     def test_manage_window_open_window_scenario(self, change_servo_angle: Mock):
         with patch("mock.adafruit_bmp280.Adafruit_BMP280_I2C.temperature",
                    new_callable=PropertyMock) as mock_temperature:
-            mock_temperature.side_effect = [18, 21] * 2
+            mock_temperature.side_effect = [18, 21]
 
             smart_room = SmartRoom()
 
@@ -96,7 +96,7 @@ class TestSmartRoom(unittest.TestCase):
     def test_manage_window_close_window_scenario(self, change_servo_angle: Mock):
         with patch("mock.adafruit_bmp280.Adafruit_BMP280_I2C.temperature",
                    new_callable=PropertyMock) as mock_temperature:
-            mock_temperature.side_effect = [19, 21] * 2
+            mock_temperature.side_effect = [19, 21]
 
             smart_room = SmartRoom()
 
@@ -108,7 +108,7 @@ class TestSmartRoom(unittest.TestCase):
     def test_manage_window_temp_out_range_scenario(self, change_servo_angle: Mock):
         with patch("mock.adafruit_bmp280.Adafruit_BMP280_I2C.temperature",
                    new_callable=PropertyMock) as mock_temperature:
-            mock_temperature.side_effect = [16, 31] * 2
+            mock_temperature.side_effect = [16, 31]
 
             smart_room = SmartRoom()
 

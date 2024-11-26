@@ -95,7 +95,8 @@ class TestSmartRoom(unittest.TestCase):
 
     @patch.object(Adafruit_BMP280_I2C, "temperature", new_callable=PropertyMock)
     @patch.object(SmartRoom, "change_servo_angle")
-    def test_manage_window_close_window_scenario(self, change_servo_angle: Mock, mock_temperature: Mock):
+    def test_manage_window_close_window_scenario(self, change_servo_angle: Mock,
+                                                 mock_temperature: Mock):
         mock_temperature.side_effect = [19, 21]
 
         smart_room = SmartRoom()

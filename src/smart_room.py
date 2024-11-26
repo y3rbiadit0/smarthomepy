@@ -1,4 +1,4 @@
-DEPLOYMENT = False # This variable is to understand whether you are deploying on the actual hardware
+DEPLOYMENT = False  # This variable is to understand whether you are deploying on the actual hardware
 
 import time
 
@@ -6,6 +6,7 @@ try:
     import adafruit_bmp280
     import board
     import RPi.GPIO as GPIO
+
     DEPLOYMENT = True
 except:
     import mock.adafruit_bmp280 as adafruit_bmp280
@@ -15,11 +16,11 @@ except:
 
 
 class SmartRoom:
-    SERVO_PIN = 31 # Servo motor pin
-    INFRARED_PIN = 22 # infrared distance sensor pin
-    LED_PIN = 37 # led pin
-    PHOTO_PIN = 13 # photoresistor pin
-    FAN_PIN = 32 # fan pin
+    SERVO_PIN = 31  # Servo motor pin
+    INFRARED_PIN = 22  # infrared distance sensor pin
+    LED_PIN = 37  # led pin
+    PHOTO_PIN = 13  # photoresistor pin
+    FAN_PIN = 32  # fan pin
 
     def __init__(self):
         # GPIO pin setup
@@ -31,16 +32,21 @@ class SmartRoom:
         GPIO.setup(self.FAN_PIN, GPIO.OUT)
 
         i2c = board.I2C()
-        self.bmp280_indor = adafruit_bmp280.Adafruit_BMP280_I2C(i2c, address=0x76) # indoor sensor
-        self.bmp280_outdoor = adafruit_bmp280.Adafruit_BMP280_I2C(i2c, address=0x68) # outdoor sensor
+        self.bmp280_indor = adafruit_bmp280.Adafruit_BMP280_I2C(i2c,
+                                                                address=0x76)  # indoor sensor
+        self.bmp280_outdoor = adafruit_bmp280.Adafruit_BMP280_I2C(i2c,
+                                                                  address=0x68)  # outdoor sensor
 
         self.sensair_s8 = senseair_s8.SenseairS8()  # carbon dioxide sensor
 
-        self.servo = GPIO.PWM(self.SERVO_PIN, 50) # Sets up the pin as a PWM pin
-        self.servo.start(2) # Starts generating PWM on the pin with a duty cycle equal to 2% (corresponding to 0 degree)
-        if DEPLOYMENT: # Sleep only if you are deploying on the actual hardware
-            time.sleep(1) # Waits 1 second so that the servo motor has time to make the turn
-        self.servo.ChangeDutyCycle(0) # Sets duty cycle equal to 0% (corresponding to a low signal)
+        self.servo = GPIO.PWM(self.SERVO_PIN, 50)  # Sets up the pin as a PWM pin
+        self.servo.start(
+            2)  # Starts generating PWM on the pin with a duty cycle equal to 2% (corresponding to 0 degree)
+        if DEPLOYMENT:  # Sleep only if you are deploying on the actual hardware
+            time.sleep(
+                1)  # Waits 1 second so that the servo motor has time to make the turn
+        self.servo.ChangeDutyCycle(
+            0)  # Sets duty cycle equal to 0% (corresponding to a low signal)
 
         self.light_on = False
         self.window_open = False
@@ -61,8 +67,10 @@ class SmartRoom:
             self.light_on = False
 
     def manage_window(self) -> None:
-        is_indoor_temp_valid = self._is_temp_in_valid_range(self.bmp280_indor.temperature)
-        is_outdoor_temp_valid = self._is_temp_in_valid_range(self.bmp280_indor.temperature)
+        is_indoor_temp_valid = self._is_temp_in_valid_range(
+            self.bmp280_indor.temperature)
+        is_outdoor_temp_valid = self._is_temp_in_valid_range(
+            self.bmp280_indor.temperature)
 
         if not is_indoor_temp_valid or not is_outdoor_temp_valid:
             self.change_servo_angle(12)
@@ -76,7 +84,6 @@ class SmartRoom:
             self.change_servo_angle(12)
             self.window_open = False
 
-
     def monitor_air_quality(self) -> None:
         if self.sensair_s8.co2() > 800:
             GPIO.output(self.FAN_PIN, GPIO.HIGH)
@@ -86,19 +93,15 @@ class SmartRoom:
             GPIO.output(self.FAN_PIN, GPIO.LOW)
             self.fan_on = False
 
-
-
-
-
     def change_servo_angle(self, duty_cycle):
         """
         Changes the servo motor's angle by passing it the corresponding PWM duty cycle
         :param duty_cycle: the width of the PWM duty cycle (it's a percentage value)
         """
-        self.servo.ChangeDutyCycle(duty_cycle) # Changes the duty cycle
+        self.servo.ChangeDutyCycle(duty_cycle)  # Changes the duty cycle
         if DEPLOYMENT:  # Sleep only if you are deploying on the actual hardware
             time.sleep(1)
-        self.servo.ChangeDutyCycle(0) # Set duty cycle equal to 0%
+        self.servo.ChangeDutyCycle(0)  # Set duty cycle equal to 0%
 
     def _is_temp_in_valid_range(self, temperature: int) -> bool:
         return 18 <= temperature <= 30

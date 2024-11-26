@@ -53,7 +53,10 @@ class TestSmartRoom(unittest.TestCase):
     @patch.object(SmartRoom, "check_enough_light")
     @patch.object(SmartRoom, "check_room_occupancy")
     @patch.object(GPIO, "output")
-    def test_manage_light_level_not_enough_light_and_person_in_the_room(self, lightbulb_mock: Mock, check_room_occupancy_mock: Mock, check_enough_light_mock: Mock):
+    def test_manage_light_level_not_enough_light_and_person_in_the_room(self,
+                                                                        lightbulb_mock: Mock,
+                                                                        check_room_occupancy_mock: Mock,
+                                                                        check_enough_light_mock: Mock):
         check_room_occupancy_mock.return_value = True
         check_enough_light_mock.return_value = False
 
@@ -67,8 +70,8 @@ class TestSmartRoom(unittest.TestCase):
     @patch.object(SmartRoom, "check_room_occupancy")
     @patch.object(GPIO, "output")
     def test_manage_light_level_turn_off_otherwise(self, lightbulb_mock: Mock,
-                                check_room_occupancy_mock: Mock,
-                                check_enough_light_mock: Mock):
+                                                   check_room_occupancy_mock: Mock,
+                                                   check_enough_light_mock: Mock):
         check_room_occupancy_mock.return_value = False
         check_enough_light_mock.return_value = False
 
@@ -77,5 +80,3 @@ class TestSmartRoom(unittest.TestCase):
         smart_room.manage_light_level()
         lightbulb_mock.assert_called_with(smart_room.LED_PIN, False)
         self.assertFalse(smart_room.light_on)
-
-

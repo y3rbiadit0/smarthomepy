@@ -30,4 +30,24 @@ class TestSmartRoom(unittest.TestCase):
         infrared_sensor_mock.assert_called_with(smart_room.INFRARED_PIN)
         self.assertFalse(is_room_occupied)
 
+    @patch.object(GPIO, "input")
+    def test_check_enough_light(self, photoresistor_mock: Mock):
+        photoresistor_mock.return_value = True
+        smart_room = SmartRoom()
+
+        is_there_enough_light = smart_room.check_enough_light()
+
+        photoresistor_mock.assert_called_with(smart_room.PHOTO_PIN)
+        self.assertTrue(is_there_enough_light)
+
+    @patch.object(GPIO, "input")
+    def test_check_enough_light_not_enough(self, photoresistor_mock: Mock):
+        photoresistor_mock.return_value = False
+        smart_room = SmartRoom()
+
+        is_there_enough_light = smart_room.check_enough_light()
+
+        photoresistor_mock.assert_called_with(smart_room.PHOTO_PIN)
+        self.assertFalse(is_there_enough_light)
+
 

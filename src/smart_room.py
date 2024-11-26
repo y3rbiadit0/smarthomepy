@@ -65,6 +65,7 @@ class SmartRoom:
             self.change_servo_angle(2)
             self.window_open = True
         else:
+            self.change_servo_angle(12)
             self.window_open = False
 
 

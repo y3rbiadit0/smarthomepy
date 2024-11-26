@@ -83,7 +83,7 @@ class TestSmartRoom(unittest.TestCase):
 
 
     @patch.object(SmartRoom, "change_servo_angle")
-    def test_manage_window(self, change_servo_angle: Mock):
+    def test_manage_window_open_window_scenario(self, change_servo_angle: Mock):
         with patch("mock.adafruit_bmp280.Adafruit_BMP280_I2C.temperature", new_callable=PropertyMock) as mock_temperature:
             mock_temperature.side_effect = [18, 21]
 
@@ -92,3 +92,15 @@ class TestSmartRoom(unittest.TestCase):
             smart_room.manage_window()
             change_servo_angle.assert_called_with(2)    # duty_cycle = (0/18) + 2
             self.assertTrue(smart_room.window_open)
+
+    @patch.object(SmartRoom, "change_servo_angle")
+    def test_manage_window_close_window_scenario(self, change_servo_angle: Mock):
+        with patch("mock.adafruit_bmp280.Adafruit_BMP280_I2C.temperature",
+                   new_callable=PropertyMock) as mock_temperature:
+            mock_temperature.side_effect = [19, 21]
+
+            smart_room = SmartRoom()
+
+            smart_room.manage_window()
+            change_servo_angle.assert_called_with(12)  # duty_cycle = (180/18) + 2
+            self.assertFalse(smart_room.window_open)

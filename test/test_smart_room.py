@@ -20,4 +20,14 @@ class TestSmartRoom(unittest.TestCase):
         infrared_sensor_mock.assert_called_with(smart_room.INFRARED_PIN)
         self.assertTrue(is_room_occupied)
 
+    @patch.object(GPIO, "input")
+    def test_check_room_occupancy_free(self, infrared_sensor_mock: Mock):
+        infrared_sensor_mock.return_value = False
+        smart_room = SmartRoom()
+
+        is_room_occupied = smart_room.check_room_occupancy()
+
+        infrared_sensor_mock.assert_called_with(smart_room.INFRARED_PIN)
+        self.assertFalse(is_room_occupied)
+
 

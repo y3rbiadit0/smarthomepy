@@ -79,7 +79,7 @@ class SmartRoom:
         if indoor_temp < outdoor_temp - 2:
             self.change_servo_angle(2)
             self.window_open = True
-        else:
+        elif indoor_temp > outdoor_temp + 2:
             self.change_servo_angle(12)
             self.window_open = False
 

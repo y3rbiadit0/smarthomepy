@@ -97,7 +97,7 @@ class TestSmartRoom(unittest.TestCase):
     @patch.object(SmartRoom, "change_servo_angle")
     def test_manage_window_close_window_scenario(self, change_servo_angle: Mock,
                                                  mock_temperature: Mock):
-        mock_temperature.side_effect = [19, 21]
+        mock_temperature.side_effect = [22, 19]
 
         smart_room = SmartRoom()
 

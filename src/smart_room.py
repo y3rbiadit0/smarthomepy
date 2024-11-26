@@ -78,8 +78,11 @@ class SmartRoom:
 
 
     def monitor_air_quality(self) -> None:
-        # To be implemented
-        pass
+        if self.sensair_s8.co2() > 800:
+            GPIO.output(self.FAN_PIN, GPIO.HIGH)
+            self.fan_on = True
+
+
 
 
     def change_servo_angle(self, duty_cycle):

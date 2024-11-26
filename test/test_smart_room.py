@@ -50,4 +50,17 @@ class TestSmartRoom(unittest.TestCase):
         photoresistor_mock.assert_called_with(smart_room.PHOTO_PIN)
         self.assertFalse(is_there_enough_light)
 
+    @patch.object(SmartRoom, "check_enough_light")
+    @patch.object(SmartRoom, "check_room_occupancy")
+    @patch.object(GPIO, "output")
+    def test_manage_light_level(self, lightbulb_mock: Mock, check_room_occupancy_mock: Mock, check_enough_light_mock: Mock):
+        check_room_occupancy_mock.return_value = True
+        check_enough_light_mock.return_value = False
+
+        smart_room = SmartRoom()
+
+        smart_room.manage_light_level()
+        lightbulb_mock.assert_called_with(smart_room.LED_PIN, True)
+
+
 

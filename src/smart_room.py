@@ -82,6 +82,11 @@ class SmartRoom:
             GPIO.output(self.FAN_PIN, GPIO.HIGH)
             self.fan_on = True
 
+        if self.sensair_s8.co2() < 500:
+            GPIO.output(self.FAN_PIN, GPIO.LOW)
+            self.fan_on = False
+
+
 
 
 

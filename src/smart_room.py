@@ -55,6 +55,10 @@ class SmartRoom:
     def manage_light_level(self) -> None:
         if not self.check_enough_light() and self.check_room_occupancy():
             GPIO.output(self.LED_PIN, GPIO.HIGH)
+            self.light_on = True
+        else:
+            GPIO.output(self.LED_PIN, GPIO.LOW)
+            self.light_on = False
 
     def manage_window(self) -> None:
         # To be implemented

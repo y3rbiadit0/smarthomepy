@@ -81,16 +81,16 @@ class TestSmartRoom(unittest.TestCase):
         lightbulb_mock.assert_called_with(smart_room.LED_PIN, False)
         self.assertFalse(smart_room.light_on)
 
-
     @patch.object(SmartRoom, "change_servo_angle")
     def test_manage_window_open_window_scenario(self, change_servo_angle: Mock):
-        with patch("mock.adafruit_bmp280.Adafruit_BMP280_I2C.temperature", new_callable=PropertyMock) as mock_temperature:
+        with patch("mock.adafruit_bmp280.Adafruit_BMP280_I2C.temperature",
+                   new_callable=PropertyMock) as mock_temperature:
             mock_temperature.side_effect = [18, 21] * 2
 
             smart_room = SmartRoom()
 
             smart_room.manage_window()
-            change_servo_angle.assert_called_with(2)    # duty_cycle = (0/18) + 2
+            change_servo_angle.assert_called_with(2)  # duty_cycle = (0/18) + 2
             self.assertTrue(smart_room.window_open)
 
     @patch.object(SmartRoom, "change_servo_angle")
@@ -117,10 +117,10 @@ class TestSmartRoom(unittest.TestCase):
             change_servo_angle.assert_called_with(12)  # duty_cycle = (180/18) + 2
             self.assertFalse(smart_room.window_open)
 
-
     @patch.object(SenseairS8, "co2")
     @patch.object(GPIO, "output")
-    def test_monitor_air_quality(self, mock_fan_output: Mock, mock_co2_sensor: Mock):
+    def test_monitor_air_quality_poor_quality(self, mock_fan_output: Mock,
+                                              mock_co2_sensor: Mock):
         mock_co2_sensor.return_value = 801
         smart_room = SmartRoom()
         smart_room.monitor_air_quality()
@@ -128,3 +128,13 @@ class TestSmartRoom(unittest.TestCase):
         mock_fan_output.assert_called_with(smart_room.FAN_PIN, True)
         self.assertTrue(smart_room.fan_on)
 
+    @patch.object(SenseairS8, "co2")
+    @patch.object(GPIO, "output")
+    def test_monitor_air_quality_good_quality(self, mock_fan_output: Mock,
+                                              mock_co2_sensor: Mock):
+        mock_co2_sensor.return_value = 499
+        smart_room = SmartRoom()
+        smart_room.monitor_air_quality()
+
+        mock_fan_output.assert_called_with(smart_room.FAN_PIN, False)
+        self.assertFalse(smart_room.fan_on)
